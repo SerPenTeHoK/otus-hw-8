@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @ComponentScan("ru.sergey_gusarov.hw7_8")
-class DictAuthorRepositoryJdbcTest {
+class DictAuthorRepositoryImplTest {
 
     @Autowired
     DictAuthorRepository dictAuthorRepository;

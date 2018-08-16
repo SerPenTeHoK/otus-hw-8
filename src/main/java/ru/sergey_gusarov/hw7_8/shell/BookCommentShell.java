@@ -21,23 +21,27 @@ public class BookCommentShell {
     }
 
     @ShellMethod("BookComment count")
-    public long bookCommentCount(){
-        return  bookCommentRepository.count();
+    public long bookCommentCount() {
+        return bookCommentRepository.count();
     }
+
     @ShellMethod("BookComment get by id")
-    public String bookCommentGetById(@ShellOption long id){
+    public String bookCommentGetById(@ShellOption long id) {
         return bookCommentRepository.getById(id).toString();
     }
+
     @ShellMethod("BookComment delete by id")
-    public void bookCommentDeleteById(@ShellOption long id){
+    public void bookCommentDeleteById(@ShellOption long id) {
         bookCommentRepository.deleteById(id);
     }
+
     @ShellMethod("BookComment insert")
-    public void bookCommentInsert(@ShellOption long bookId, @ShellOption String commentText){
+    public void bookCommentInsert(@ShellOption long bookId, @ShellOption String commentText) {
         commentsService.AddBookComments(bookId, commentText);
     }
+
     @ShellMethod("BookComment list")
-    public String bookCommentList(){
-        return  bookCommentRepository.findAll().toString();
+    public String bookCommentList() {
+        return bookCommentRepository.findAll().toString();
     }
 }

@@ -1,7 +1,6 @@
 package ru.sergey_gusarov.hw7_8.dao.books;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.sergey_gusarov.hw7_8.domain.books.BookComment;
 
 import javax.persistence.EntityManager;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Repository
 //@Transactional
-public class BookCommentRepositoryJdbc implements BookCommentRepository {
+public class BookCommentRepositoryImpl implements BookCommentRepository {
     @PersistenceContext
     private EntityManager em;
 
@@ -52,7 +51,7 @@ public class BookCommentRepositoryJdbc implements BookCommentRepository {
 
     @Override
     public void deleteById(long id) {
-        this.delete(em.find(BookComment.class,  id));
+        this.delete(em.find(BookComment.class, id));
     }
 
 }

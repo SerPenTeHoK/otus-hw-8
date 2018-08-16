@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 //@Transactional
-public class DictGenreRepositoryJdbc implements DictGenreRepository {
+public class DictGenreRepositoryImpl implements DictGenreRepository {
 
     @PersistenceContext
     private EntityManager em;

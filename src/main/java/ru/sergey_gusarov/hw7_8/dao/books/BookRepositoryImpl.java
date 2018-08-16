@@ -1,7 +1,6 @@
 package ru.sergey_gusarov.hw7_8.dao.books;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.sergey_gusarov.hw7_8.domain.books.Book;
 
 import javax.persistence.EntityManager;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Repository
 //@Transactional
-public class BookRepositoryJdbc implements BookRepository {
+public class BookRepositoryImpl implements BookRepository {
 
     @PersistenceContext
     private EntityManager em;
@@ -33,7 +32,7 @@ public class BookRepositoryJdbc implements BookRepository {
     }
 
     @Override
-    public Book getByTitle(String title){
+    public Book getByTitle(String title) {
         TypedQuery<Book> query = (TypedQuery<Book>) em.createQuery("select b from Book b where b.title = :title ");
         query.setParameter("title", title);
         return query.getSingleResult();
@@ -59,6 +58,6 @@ public class BookRepositoryJdbc implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        this.delete(em.find(Book.class,  id));
+        this.delete(em.find(Book.class, id));
     }
 }

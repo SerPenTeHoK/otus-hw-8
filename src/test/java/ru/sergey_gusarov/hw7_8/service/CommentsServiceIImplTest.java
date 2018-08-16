@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.sergey_gusarov.hw7_8.dao.books.BookCommentRepository;
-import ru.sergey_gusarov.hw7_8.dao.books.BookRepositoryJdbc;
+import ru.sergey_gusarov.hw7_8.dao.books.BookRepositoryImpl;
 import ru.sergey_gusarov.hw7_8.domain.books.Author;
 import ru.sergey_gusarov.hw7_8.domain.books.Book;
 import ru.sergey_gusarov.hw7_8.domain.books.BookComment;
@@ -31,7 +31,7 @@ class CommentsServiceIImplTest {
     private final static String COMMENT_FOR_ADD_1 = "comment1";
 
     @Autowired
-    private BookRepositoryJdbc bookRepositoryJdbc;
+    private BookRepositoryImpl bookRepositoryImpl;
     @Autowired
     private BookCommentRepository bookCommentRepository;
     @Autowired
@@ -52,7 +52,7 @@ class CommentsServiceIImplTest {
     @Sql(scripts = "classpath:schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void addBookCommentsByObjBook() {
         Book originalBook = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(originalBook);
+        bookRepositoryImpl.insert(originalBook);
         Book fromDb = getBookfromDb(originalBook);
         commentsService.AddBookComments(fromDb, COMMENT_FOR_ADD_1);
 
@@ -65,7 +65,7 @@ class CommentsServiceIImplTest {
     @Sql(scripts = "classpath:schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void addBookCommentsByIdBook() {
         Book originalBook = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(originalBook);
+        bookRepositoryImpl.insert(originalBook);
         Book fromDb = getBookfromDb(originalBook);
         commentsService.AddBookComments(fromDb.getId(), COMMENT_FOR_ADD_1);
 
@@ -74,13 +74,13 @@ class CommentsServiceIImplTest {
     }
 
     private Book getBookfromDb(Book originalBook) {
-        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getByTitle(originalBook.getTitle()));
+        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryImpl.getByTitle(originalBook.getTitle()));
         Book fromDb = fromDbOptional.get();
         return fromDb;
     }
 
     private BookComment getBookCommentFromDb(Book originalBook) {
-        Optional<Book> fromDbOptional2 = Optional.ofNullable(bookRepositoryJdbc.getByTitle(originalBook.getTitle()));
+        Optional<Book> fromDbOptional2 = Optional.ofNullable(bookRepositoryImpl.getByTitle(originalBook.getTitle()));
         Book fromDb = fromDbOptional2.get();
         Optional<BookComment> bookCommentOptional = fromDb.getBookComments().stream().findFirst();
         return bookCommentOptional.get();

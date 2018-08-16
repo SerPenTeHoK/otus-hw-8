@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @ComponentScan("ru.sergey_gusarov.hw7_8")
-class BookCommentRepositoryJdbcTest {
+class BookCommentRepositoryImplTest {
 
     @Autowired
     private BookCommentRepository bookCommentRepository;
     @Autowired
-    private BookRepositoryJdbc bookRepositoryJdbc;
+    private BookRepositoryImpl bookRepositoryImpl;
 
     private Book dummyBook1Genre1Author2() {
         Set<Genre> genres = new HashSet<>(1);
@@ -66,7 +66,7 @@ class BookCommentRepositoryJdbcTest {
         Book book = dummyBook1Genre1Author2();
         book = addToBookComment(book, "Comment01");
         book = addToBookComment(book, "Comment02");
-        bookRepositoryJdbc.insert(book);
+        bookRepositoryImpl.insert(book);
         long count = bookCommentRepository.count();
         assertEquals(2L, count);
     }
@@ -76,7 +76,7 @@ class BookCommentRepositoryJdbcTest {
     void insert() {
         String commentStr = "Comment1";
         Book originalBook = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(originalBook);
+        bookRepositoryImpl.insert(originalBook);
         BookComment bookComment = new BookComment();
         bookComment.setText(commentStr);
         bookCommentRepository.insert(bookComment);
@@ -177,7 +177,7 @@ class BookCommentRepositoryJdbcTest {
         bookCommentRepository.delete(bookCommentsForDelete);
         bookCommentsForDelete = bookCommentRepository.getById(bookComments.get(2).getId());
         bookCommentRepository.delete(bookCommentsForDelete);
-        count = bookRepositoryJdbc.count();
+        count = bookRepositoryImpl.count();
         assertEquals(0L, count);
     }
 
@@ -221,7 +221,7 @@ class BookCommentRepositoryJdbcTest {
         bookCommentRepository.deleteById(bookCommentsForDelete.getId());
         bookCommentsForDelete = bookCommentRepository.getById(bookComments.get(2).getId());
         bookCommentRepository.deleteById(bookCommentsForDelete.getId());
-        count = bookRepositoryJdbc.count();
+        count = bookRepositoryImpl.count();
         assertEquals(0L, count);
     }
 }

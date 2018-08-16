@@ -48,9 +48,6 @@ public class BookShell {
     public void bookInsert(@ShellOption String title, @ShellOption String authorName, @ShellOption String genreName) {
         Book book = new Book();
         book.setTitle(title);
-        //book-insert t1 a1 g1
-        //book-list
-        //book-comment-insert 1 text
         Author author;
         try {
             author = dictAuthorRepository.getByName(authorName);

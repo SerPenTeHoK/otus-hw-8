@@ -11,8 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.sergey_gusarov.hw7_8.dao.books.dict.DictAuthorRepositoryJdbc;
-import ru.sergey_gusarov.hw7_8.dao.books.dict.DictGenreRepositoryJdbc;
 import ru.sergey_gusarov.hw7_8.domain.books.Author;
 import ru.sergey_gusarov.hw7_8.domain.books.Book;
 import ru.sergey_gusarov.hw7_8.domain.books.BookComment;
@@ -27,17 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @ComponentScan("ru.sergey_gusarov.hw7_8")
-class BookRepositoryJdbcTest {
+class BookRepositoryImplTest {
     private final static String COMMENT_FOR_ADD_1 = "comment1";
 
     @Autowired
-    private BookRepositoryJdbc bookRepositoryJdbc;
-    @Autowired
-    private DictGenreRepositoryJdbc dictGenreRepositoryJdbc;
-    @Autowired
-    private DictAuthorRepositoryJdbc dictAuthorRepositoryJdbc;
-    @Autowired
-    private BookCommentRepositoryJdbc bookCommentsRepositoryJdbc;
+    private BookRepository bookRepository;
 
     private Book dummyBook1Genre1Author2() {
         Set<Genre> genres = new HashSet<>(1);
@@ -67,10 +59,10 @@ class BookRepositoryJdbcTest {
     @Test
     @DisplayName("Count")
     void count() {
-        bookRepositoryJdbc.insert(new Book("Title1"));
-        bookRepositoryJdbc.insert(new Book("Title2"));
-        bookRepositoryJdbc.insert(new Book("Title3"));
-        long count = bookRepositoryJdbc.count();
+        bookRepository.insert(new Book("Title1"));
+        bookRepository.insert(new Book("Title2"));
+        bookRepository.insert(new Book("Title3"));
+        long count = bookRepository.count();
         assertEquals(3L, count);
     }
 
@@ -78,8 +70,8 @@ class BookRepositoryJdbcTest {
     @DisplayName("Insert")
     void insert() {
         Book original = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(original);
-        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getByTitle(original.getTitle()));
+        bookRepository.insert(original);
+        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepository.getByTitle(original.getTitle()));
         Book fromDb = fromDbOptional.get();
         testBook(original, fromDb);
     }
@@ -88,10 +80,10 @@ class BookRepositoryJdbcTest {
     @DisplayName("Get by id")
     void getById() {
         Book original = dummyBook3Genre1AuthorName3();
-        bookRepositoryJdbc.insert(original);
-        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getByTitle(original.getTitle()));
+        bookRepository.insert(original);
+        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepository.getByTitle(original.getTitle()));
         Book fromDb = fromDbOptional.get();
-        fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getById(fromDb.getId()));
+        fromDbOptional = Optional.ofNullable(bookRepository.getById(fromDb.getId()));
         fromDb = fromDbOptional.get();
         testBook(original, fromDb);
     }
@@ -100,8 +92,8 @@ class BookRepositoryJdbcTest {
     @DisplayName("Get by title")
     void getByTitle() {
         Book original = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(original);
-        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getByTitle(original.getTitle()));
+        bookRepository.insert(original);
+        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepository.getByTitle(original.getTitle()));
         Book fromDb = fromDbOptional.get();
         testBook(original, fromDb);
     }
@@ -114,9 +106,9 @@ class BookRepositoryJdbcTest {
 
         for (Integer i = 0; i < COUNT_ITERATION; i++) {
             books.add(new Book("Title" + i.toString()));
-            bookRepositoryJdbc.insert(books.get(i));
+            bookRepository.insert(books.get(i));
         }
-        List<Book> booksFromDb = bookRepositoryJdbc.findAll();
+        List<Book> booksFromDb = bookRepository.findAll();
         assertEquals(COUNT_ITERATION, booksFromDb.size());
         for (Integer i = 0; i < COUNT_ITERATION; i++) {
             Integer finalI = i;
@@ -132,11 +124,11 @@ class BookRepositoryJdbcTest {
     void update() {
         String updatedTitle = "Update title";
         Book book = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(book);
-        Book bookForUpdate = bookRepositoryJdbc.getByTitle(book.getTitle());
+        bookRepository.insert(book);
+        Book bookForUpdate = bookRepository.getByTitle(book.getTitle());
         bookForUpdate.setTitle(updatedTitle);
-        bookRepositoryJdbc.update(bookForUpdate);
-        Book updatedBook = bookRepositoryJdbc.getByTitle(updatedTitle);
+        bookRepository.update(bookForUpdate);
+        Book updatedBook = bookRepository.getByTitle(updatedTitle);
         testBook(bookForUpdate, updatedBook);
     }
 
@@ -148,37 +140,37 @@ class BookRepositoryJdbcTest {
 
         for (Integer i = 0; i < COUNT_ITERATION; i++) {
             books.add(new Book("Title" + i.toString()));
-            bookRepositoryJdbc.insert(books.get(i));
+            bookRepository.insert(books.get(i));
         }
-        long count = bookRepositoryJdbc.count();
+        long count = bookRepository.count();
         assertEquals(3L, count);
 
-        Book bookForDelete = bookRepositoryJdbc.getByTitle(books.get(1).getTitle());
-        bookRepositoryJdbc.delete(bookForDelete);
-        count = bookRepositoryJdbc.count();
+        Book bookForDelete = bookRepository.getByTitle(books.get(1).getTitle());
+        bookRepository.delete(bookForDelete);
+        count = bookRepository.count();
         assertEquals(2L, count);
 
         //Проверям, что удалили то, что нужно
-        Book book0 = bookRepositoryJdbc.getByTitle(books.get(0).getTitle());
-        Book book2 = bookRepositoryJdbc.getByTitle(books.get(2).getTitle());
+        Book book0 = bookRepository.getByTitle(books.get(0).getTitle());
+        Book book2 = bookRepository.getByTitle(books.get(2).getTitle());
         testBook(books.get(0), book0);
         testBook(books.get(2), book2);
 
         // Попытка удалить несуществующую запись
         Throwable noResultException = assertThrows(NoResultException.class, () -> {
-                    Book bookCantDelete = bookRepositoryJdbc.getByTitle(books.get(1).getTitle());
-                    bookRepositoryJdbc.delete(bookCantDelete);
+                    Book bookCantDelete = bookRepository.getByTitle(books.get(1).getTitle());
+                    bookRepository.delete(bookCantDelete);
                 }
         );
         assertEquals("No entity found for query",
                 noResultException.getMessage(), "Don't throw exception");
 
-        bookForDelete = bookRepositoryJdbc.getByTitle(books.get(0).getTitle());
-        bookRepositoryJdbc.delete(bookForDelete);
-        bookForDelete = bookRepositoryJdbc.getByTitle(books.get(2).getTitle());
-        bookRepositoryJdbc.delete(bookForDelete);
+        bookForDelete = bookRepository.getByTitle(books.get(0).getTitle());
+        bookRepository.delete(bookForDelete);
+        bookForDelete = bookRepository.getByTitle(books.get(2).getTitle());
+        bookRepository.delete(bookForDelete);
 
-        count = bookRepositoryJdbc.count();
+        count = bookRepository.count();
         assertEquals(0L, count);
     }
 
@@ -190,33 +182,33 @@ class BookRepositoryJdbcTest {
 
         for (Integer i = 0; i < COUNT_ITERATION; i++) {
             books.add(new Book("Title" + i.toString()));
-            bookRepositoryJdbc.insert(books.get(i));
+            bookRepository.insert(books.get(i));
         }
-        long count = bookRepositoryJdbc.count();
+        long count = bookRepository.count();
         assertEquals(3L, count);
 
-        List<Book> booksFromDb = bookRepositoryJdbc.findAll();
-        bookRepositoryJdbc.deleteById(booksFromDb.get(1).getId());
-        count = bookRepositoryJdbc.count();
+        List<Book> booksFromDb = bookRepository.findAll();
+        bookRepository.deleteById(booksFromDb.get(1).getId());
+        count = bookRepository.count();
         assertEquals(2L, count);
 
         //Проверям, что удалили то, что нужно
-        Book book0 = bookRepositoryJdbc.getById(booksFromDb.get(0).getId());
-        Book book2 = bookRepositoryJdbc.getById(booksFromDb.get(2).getId());
+        Book book0 = bookRepository.getById(booksFromDb.get(0).getId());
+        Book book2 = bookRepository.getById(booksFromDb.get(2).getId());
         testBook(books.get(0), book0);
         testBook(books.get(2), book2);
 
         // Попытка удалить несуществующую запись
         Throwable illegalArgumentException = assertThrows(IllegalArgumentException.class, () ->
-                bookRepositoryJdbc.deleteById(booksFromDb.get(1).getId())
+                bookRepository.deleteById(booksFromDb.get(1).getId())
         );
         assertEquals("attempt to create delete event with null entity",
                 illegalArgumentException.getMessage(), "Don't throw exception");
 
-        bookRepositoryJdbc.deleteById(booksFromDb.get(0).getId());
-        bookRepositoryJdbc.deleteById(booksFromDb.get(2).getId());
+        bookRepository.deleteById(booksFromDb.get(0).getId());
+        bookRepository.deleteById(booksFromDb.get(2).getId());
 
-        count = bookRepositoryJdbc.count();
+        count = bookRepository.count();
         assertEquals(0L, count);
     }
 
@@ -263,8 +255,8 @@ class BookRepositoryJdbcTest {
     @DisplayName("Add book comment by book")
     void addBookCommentByBook() {
         Book originalBook = dummyBook1Genre1Author2();
-        bookRepositoryJdbc.insert(originalBook);
-        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepositoryJdbc.getByTitle(originalBook.getTitle()));
+        bookRepository.insert(originalBook);
+        Optional<Book> fromDbOptional = Optional.ofNullable(bookRepository.getByTitle(originalBook.getTitle()));
         Book fromDb = fromDbOptional.get();
 
         BookComment bookComment = new BookComment();
@@ -272,7 +264,7 @@ class BookRepositoryJdbcTest {
         bookComment.setText(COMMENT_FOR_ADD_1);
         fromDb.getBookComments().add(bookComment);
 
-        Book fromDbUpdated = bookRepositoryJdbc.update(fromDb);
+        Book fromDbUpdated = bookRepository.update(fromDb);
         Optional<BookComment> bookCommentOptional = fromDbUpdated.getBookComments().stream().findFirst();
         if (!bookCommentOptional.isPresent())
             fail("Comment doesn't saved");
