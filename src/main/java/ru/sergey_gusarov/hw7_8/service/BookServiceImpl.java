@@ -2,6 +2,7 @@ package ru.sergey_gusarov.hw7_8.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.sergey_gusarov.hw7_8.dao.books.BookRepository;
 import ru.sergey_gusarov.hw7_8.dao.books.dict.DictAuthorRepository;
 import ru.sergey_gusarov.hw7_8.dao.books.dict.DictGenreRepository;
@@ -41,6 +42,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void bookInsertTitleAuthorGenre(String title, String authorName, String genreName) {
         Book book = new Book();
         book.setTitle(title);
