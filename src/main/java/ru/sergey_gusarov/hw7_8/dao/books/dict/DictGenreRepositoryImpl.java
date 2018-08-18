@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-//@Transactional
+@Transactional
 public class DictGenreRepositoryImpl implements DictGenreRepository {
 
     @PersistenceContext
